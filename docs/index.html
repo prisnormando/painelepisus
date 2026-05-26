@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,15 +30,19 @@
             --color-error: #e74c3c;
             --color-info: #3498db;
             --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
             --radius-sm: 6px;
             --radius-md: 10px;
             --radius-lg: 16px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: var(--font-family);
@@ -99,7 +104,7 @@
         }
 
         .header-links a:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* MAIN LAYOUT */
@@ -418,7 +423,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 2000;
             align-items: center;
             justify-content: center;
@@ -459,7 +464,7 @@
         /* FOOTER */
         .footer {
             background: var(--color-primary);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             padding: 20px 32px;
             text-align: center;
             font-size: 13px;
@@ -479,6 +484,7 @@
             .charts-grid {
                 grid-template-columns: 1fr;
             }
+
             .sidebar {
                 width: 240px;
             }
@@ -488,15 +494,19 @@
             .header {
                 padding: 12px 16px;
             }
+
             .header-logo {
                 height: 36px;
             }
+
             .header-title {
                 font-size: 16px;
             }
+
             .main-container {
                 flex-direction: column;
             }
+
             .sidebar {
                 width: 100%;
                 position: static;
@@ -504,12 +514,15 @@
                 border-right: none;
                 border-bottom: 1px solid var(--color-neutral-dark);
             }
+
             .content {
                 padding: 16px;
             }
+
             .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             #map {
                 height: 320px;
             }
@@ -519,22 +532,27 @@
         .marker-cluster-small {
             background-color: rgba(230, 126, 34, 0.3) !important;
         }
+
         .marker-cluster-small div {
             background-color: rgba(230, 126, 34, 0.7) !important;
             color: #fff !important;
             font-weight: 600;
         }
+
         .marker-cluster-medium {
             background-color: rgba(211, 84, 0, 0.3) !important;
         }
+
         .marker-cluster-medium div {
             background-color: rgba(211, 84, 0, 0.7) !important;
             color: #fff !important;
             font-weight: 600;
         }
+
         .marker-cluster-large {
             background-color: rgba(26, 26, 46, 0.3) !important;
         }
+
         .marker-cluster-large div {
             background-color: rgba(26, 26, 46, 0.7) !important;
             color: #fff !important;
@@ -580,7 +598,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Taxa de Sucesso Gauge */
@@ -605,12 +625,13 @@
         }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
         <img src="logo_branco.svg" alt="EpiSUS Intermediário" class="header-logo">
         <div class="header-title">
-            Painel EpiSUS Intermediário
+            Especialização EpiSUS Intermediário
             <small>Análise do Perfil e Distribuição Geográfica dos Egressos</small>
         </div>
         <div class="header-links">
@@ -633,7 +654,8 @@
 
             <div class="filter-group">
                 <label>Município</label>
-                <input type="text" id="filter-municipio" placeholder="Digite o nome do município" list="municipios-list">
+                <input type="text" id="filter-municipio" placeholder="Digite o nome do município"
+                    list="municipios-list">
                 <datalist id="municipios-list"></datalist>
             </div>
 
@@ -679,7 +701,8 @@
             </div>
 
             <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-neutral-dark);">
-                <a href="https://www.gov.br/saude/pt-br/composicao/svsa/episus" target="_blank" style="font-size: 12px; color: var(--color-text-light); text-decoration: none;">
+                <a href="https://www.gov.br/saude/pt-br/composicao/svsa/episus" target="_blank"
+                    style="font-size: 12px; color: var(--color-text-light); text-decoration: none;">
                     Sobre o EPISUS
                 </a>
             </div>
@@ -727,11 +750,21 @@
                 <div id="map"></div>
                 <div class="map-legend">
                     <span style="font-weight:600; color: var(--color-text-light);">Concentração:</span>
-                    <div class="legend-item"><div class="legend-dot" style="background:#E67E22;"></div> 30+ egressos</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#F39C12;"></div> 20-29</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#F1C40F;"></div> 10-19</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#82E0AA;"></div> 5-9</div>
-                    <div class="legend-item"><div class="legend-dot" style="background:#AED6F1;"></div> 1-4</div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#E67E22;"></div> 30+ egressos
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#F39C12;"></div> 20-29
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#F1C40F;"></div> 10-19
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#82E0AA;"></div> 5-9
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#AED6F1;"></div> 1-4
+                    </div>
                 </div>
             </div>
 
@@ -898,7 +931,7 @@
 
     <!-- FOOTER -->
     <footer class="footer">
-        &copy; 2026 Fiocruz - Programa EpiSUS Intermediário | 
+        &copy; 2026 Fiocruz - Programa EpiSUS Intermediário |
         <a href="https://www.gov.br/saude/pt-br/composicao/svsa/episus" target="_blank">Sobre o EpiSUS</a>
     </footer>
 
@@ -915,4 +948,5 @@
     <script src="estados.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>
