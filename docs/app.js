@@ -29,7 +29,7 @@ const COLORS = {
 // ============================================================
 // INITIALIZATION
 // ============================================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeFilters();
     applyFilters();
     initMap();
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================================
 function initializeFilters() {
     const data = DADOS_EPISUS;
-    
+
     // Turma filter
     const turmas = [...new Set(data.map(d => d.nometurma))].sort();
     const turmaSelect = document.getElementById('filter-turma');
@@ -120,7 +120,7 @@ function initializeFilters() {
 // ============================================================
 function getActiveFilters() {
     const filters = {};
-    
+
     const turma = document.getElementById('filter-turma').value;
     if (turma) filters.turma = turma;
 
@@ -160,7 +160,7 @@ function applyFilters() {
         data = data.filter(d => d.nometurma === filters.turma);
     }
     if (filters.municipio) {
-        data = data.filter(d => d.municipio_trab_durante_curso && 
+        data = data.filter(d => d.municipio_trab_durante_curso &&
             d.municipio_trab_durante_curso.toLowerCase().includes(filters.municipio.toLowerCase()));
     }
     if (filters.porte) {
@@ -180,7 +180,7 @@ function applyFilters() {
     }
 
     filteredData = data;
-    
+
     updateKPIs();
     updateCharts();
     updateMap();
@@ -203,7 +203,7 @@ function resetFilters() {
 function updateActiveFiltersDisplay(filters) {
     const container = document.getElementById('active-filters-container');
     const list = document.getElementById('active-filters-list');
-    
+
     const keys = Object.keys(filters);
     if (keys.length === 0) {
         container.style.display = 'none';
@@ -233,7 +233,7 @@ function updateActiveFiltersDisplay(filters) {
 }
 
 function removeFilter(key) {
-    switch(key) {
+    switch (key) {
         case 'turma': document.getElementById('filter-turma').value = ''; break;
         case 'municipio': document.getElementById('filter-municipio').value = ''; break;
         case 'porte': document.getElementById('filter-porte').value = ''; break;
@@ -255,7 +255,7 @@ function removeFilter(key) {
 function updateKPIs() {
     const data = filteredData;
     const egressos = data.filter(d => d.egresso === 'Sim');
-    
+
     // Total egressos
     document.getElementById('kpi-egressos').textContent = egressos.length.toLocaleString('pt-BR');
     document.getElementById('kpi-egressos-detail').textContent = `de ${data.length} registros filtrados`;
@@ -266,19 +266,35 @@ function updateKPIs() {
     document.getElementById('kpi-municipios-detail').textContent = `em ${new Set(egressos.map(d => d.uf_trab)).size} UFs`;
 
     // Taxa de sucesso
-    const turmasFinalizadas = [...new Set(data.filter(d => d.statusturma === 'Finalizada').map(d => d.nometurma))];
-    let totalEgressos = 0;
+    //const turmasFinalizadas = [...new Set(data.filter(d => d.statusturma === 'Finalizada').map(d => d.nometurma))];
+    //let totalEgressos = 0;
+    //let totalVagas = 0;
+    //turmasFinalizadas.forEach(turma => {
+    //    const turmaData = DADOS_EPISUS.filter(d => d.nometurma === turma);
+    //    const vagas = turmaData[0]?.vagas_ofertadas || 0;
+    //    const concluintes = turmaData.filter(d => d.egresso === 'Sim').length;
+    //    totalEgressos += concluintes;
+    //    totalVagas += vagas;
+    //});
+    //const taxa = totalVagas > 0 ? ((totalEgressos / totalVagas) * 100).toFixed(1) : 0;
+    //document.getElementById('kpi-taxa').textContent = taxa + '%';
+    //document.getElementById('kpi-taxa-detail').textContent = `${totalEgressos} concluintes / ${totalVagas} vagas`;
+
+    const egressosFiltrados = data.filter(d => d.egresso === 'Sim');
+    const turmasComEgressos = [...new Set(egressosFiltrados.map(d => d.nometurma))];
+    let totalConcluintes = 0;
     let totalVagas = 0;
-    turmasFinalizadas.forEach(turma => {
-        const turmaData = DADOS_EPISUS.filter(d => d.nometurma === turma);
-        const vagas = turmaData[0]?.vagas_ofertadas || 0;
-        const concluintes = turmaData.filter(d => d.egresso === 'Sim').length;
-        totalEgressos += concluintes;
+    turmasComEgressos.forEach(turma => {
+        const turmaCompleta = DADOS_EPISUS.filter(d => d.nometurma === turma);
+        const vagas = turmaCompleta[0]?.vagas_ofertadas || 0;
+        const concluintes = turmaCompleta.filter(d => d.egresso === 'Sim').length;
+        totalConcluintes += concluintes;
         totalVagas += vagas;
     });
-    const taxa = totalVagas > 0 ? ((totalEgressos / totalVagas) * 100).toFixed(1) : 0;
+    const taxa = totalVagas > 0 ? ((totalConcluintes / totalVagas) * 100).toFixed(1) : 0;
     document.getElementById('kpi-taxa').textContent = taxa + '%';
-    document.getElementById('kpi-taxa-detail').textContent = `${totalEgressos} concluintes / ${totalVagas} vagas`;
+    document.getElementById('kpi-taxa-detail').textContent = `${totalConcluintes} concluintes / ${totalVagas} vagas`;
+
 
     // Turmas
     const turmasCount = new Set(data.map(d => d.nometurma));
@@ -320,7 +336,7 @@ function initMap() {
                 fillOpacity: 0.3,
                 opacity: 0.6
             },
-            onEachFeature: function(feature, layer) {
+            onEachFeature: function (feature, layer) {
                 layer.bindTooltip(feature.properties.name || feature.properties.sigla, {
                     permanent: false,
                     direction: 'center',
@@ -335,13 +351,13 @@ function initMap() {
         maxClusterRadius: 50,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
-        iconCreateFunction: function(cluster) {
+        iconCreateFunction: function (cluster) {
             const count = cluster.getChildCount();
             let size = 'small';
             let dim = 40;
             if (count >= 20) { size = 'large'; dim = 56; }
             else if (count >= 10) { size = 'medium'; dim = 48; }
-            
+
             return L.divIcon({
                 html: '<div>' + count + '</div>',
                 className: 'marker-cluster marker-cluster-' + size,
@@ -359,7 +375,7 @@ function updateMap() {
     markersLayer.clearLayers();
 
     const egressos = filteredData.filter(d => d.egresso === 'Sim' && d.latitude && d.longitude);
-    
+
     // Group by municipality
     const munGroup = {};
     egressos.forEach(d => {
@@ -383,7 +399,7 @@ function updateMap() {
     Object.values(munGroup).forEach(mun => {
         const color = getMarkerColor(mun.count);
         const radius = Math.min(Math.max(mun.count * 0.8, 5), 25);
-        
+
         const marker = L.circleMarker([mun.lat, mun.lng], {
             radius: radius,
             fillColor: color,
@@ -394,7 +410,7 @@ function updateMap() {
         });
 
         const proporcao = mun.pop > 0 ? (mun.count / mun.pop * 200000).toFixed(2) : 'N/A';
-        
+
         marker.bindPopup(`
             <div class="popup-content">
                 <strong>${mun.nome}</strong> - ${mun.uf}<br>
@@ -403,7 +419,7 @@ function updateMap() {
                 Pop.: ${mun.pop ? mun.pop.toLocaleString('pt-BR') : 'N/I'}<br>
                 Proporção: <span class="popup-value">${proporcao}</span> por 200 mil hab.
             </div>
-        `, {className: 'custom-popup'});
+        `, { className: 'custom-popup' });
 
         markersLayer.addLayer(marker);
     });
@@ -468,7 +484,7 @@ function expandMap() {
 // ============================================================
 function updateCharts() {
     const egressos = filteredData.filter(d => d.egresso === 'Sim');
-    
+
     createTurmaChart(egressos);
     createTaxaSucessoChart();
     createSexoChart(egressos);
@@ -510,7 +526,7 @@ function createTurmaChart(data) {
     destroyChart('turmaChart');
     const counts = countBy(data, 'nometurma');
     const entries = sortedEntries(counts);
-    
+
     charts['turmaChart'] = new Chart(document.getElementById('turmaChart'), {
         type: 'bar',
         data: {
@@ -599,7 +615,7 @@ function createSexoChart(data) {
                 legend: { position: 'bottom' },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
+                        label: function (ctx) {
                             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
                             const pct = ((ctx.raw / total) * 100).toFixed(1);
                             return `${ctx.label}: ${ctx.raw} (${pct}%)`;
@@ -700,7 +716,7 @@ function createTitulacaoChart(data) {
                 legend: { position: 'bottom' },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
+                        label: function (ctx) {
                             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
                             const pct = ((ctx.raw / total) * 100).toFixed(1);
                             return `${ctx.label}: ${ctx.raw} (${pct}%)`;
@@ -798,7 +814,7 @@ function createTipoTccChart(data) {
                 legend: { position: 'bottom' },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
+                        label: function (ctx) {
                             const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
                             const pct = ((ctx.raw / total) * 100).toFixed(1);
                             return `${ctx.label}: ${ctx.raw} (${pct}%)`;
@@ -873,7 +889,7 @@ function createRegiaoChart(data) {
 // Proporção Epidemiologistas por 200 mil hab (Top 10 UFs)
 function createProporcaoChart(data) {
     destroyChart('proporcaoChart');
-    
+
     // Group by UF
     const ufGroup = {};
     data.forEach(d => {
@@ -922,7 +938,7 @@ function createProporcaoChart(data) {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
+                        label: function (ctx) {
                             return `${ctx.raw} epidemiologistas por 200 mil hab.`;
                         }
                     }
@@ -951,7 +967,7 @@ function expandChart(chartId) {
 
     const config = JSON.parse(JSON.stringify(originalChart.config));
     config.options.maintainAspectRatio = false;
-    
+
     setTimeout(() => {
         const modalCanvas = document.getElementById('modal-chart');
         modalCanvas.style.height = '60vh';
@@ -965,6 +981,6 @@ function closeModal(event) {
 }
 
 // Close modal on Escape
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeModal();
 });
